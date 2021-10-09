@@ -1,0 +1,23 @@
+# Service for alert BTC management
+
+This is a repo for creating a service that monitors BTC prize and create alerts.
+
+## Setup
+
+```shell
+npm install
+```
+
+## Run prisma
+
+```shell
+npx prisma migrate dev --name "init"
+npx prisma db seed
+```
+
+## Run
+
+```shell
+npm run start
+```
+

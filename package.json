@@ -4,7 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "nodemon ./src/index.ts",
+    "prod": "npm run build && npm run start",
+    "start": "./node_modules/.bin/ts-node src/index.ts",
+    "build": "tsc",
+    "db-migrate": "prisma migrate dev --name 'init'",
+    "db-seed": "prisma db seed"
   },
   "prisma": {
     "seed": "ts-node prisma/seed.ts"
@@ -23,6 +28,8 @@
   },
   "dependencies": {
     "@prisma/client": "^3.2.1",
-    "@types/faker": "^5.5.8"
+    "@types/faker": "^5.5.8",
+    "@types/morgan": "^1.9.3",
+    "morgan": "^1.10.0"
   }
 }

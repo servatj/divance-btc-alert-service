@@ -1,35 +1,43 @@
-import { PrismaClient } from '@prisma/client'
-import express from 'express'
+import http from 'http';
+import express, { Express } from 'express';
+import morgan from 'morgan';
+import routesUser from './routes/user';
 
-// #2
-const prisma = new PrismaClient()
+const router: Express = express();
 
-// #3
-const app = express()
+/** Logging */
+router.use(morgan('dev'));
+/** Parse the request */
+router.use(express.urlencoded({ extended: false }));
+/** Takes care of JSON data */
+router.use(express.json());
 
-// #4
-app.use(express.json())
+/** RULES OF OUR API */
+router.use((req, res, next) => {
+    // set the CORS policy
+    res.header('Access-Control-Allow-Origin', '*');
+    // set the CORS headers
+    res.header('Access-Control-Allow-Headers', 'origin, X-Requested-With,Content-Type,Accept, Authorization');
+    // set the CORS method headers
+    if (req.method === 'OPTIONS') {
+        res.header('Access-Control-Allow-Methods', 'GET PATCH DELETE POST');
+        return res.status(200).json({});
+    }
+    next();
+});
 
-// #5
-app.get('/users', async (req, res) => {
-  const users = await prisma.user.findMany()
-  res.json({
-    success: true,
-    payload: users,
-    message: "Operation Successful",
-  })
-})
+/** Routes */
+router.use('/', routesUser);
 
-app.use((req, res, next) => {
-    res.status(404);
-    return res.json({
-      success: false,
-      payload: null,
-      message: `API SAYS: Endpoin t not found for path: ${req.path}`,
+/** Error handling */
+router.use((req, res, next) => {
+    const error = new Error('not found');
+    return res.status(404).json({
+        message: error.message
     });
 });
 
-// #6
-app.listen(3000, () =>
-  console.log('REST API server ready at: http://localhost:3000'),
-)
+/** Server */
+const httpServer = http.createServer(router);
+const PORT: any = process.env.PORT ?? 6060;
+httpServer.listen(PORT, () => console.log(`The server is running on port ${PORT}`));
