@@ -1,9 +1,15 @@
 import http from 'http';
+import config from './config/config';
 import express, { Express } from 'express';
+import expressJSDocSwagger from 'express-jsdoc-swagger';
 import morgan from 'morgan';
 import routesUser from './routes/user';
+import swaggerUi from 'swagger-ui-express';
+
 
 const router: Express = express();
+
+expressJSDocSwagger(router)(config.jsdocSwagger);
 
 /** Logging */
 router.use(morgan('dev'));
@@ -39,5 +45,5 @@ router.use((req, res, next) => {
 
 /** Server */
 const httpServer = http.createServer(router);
-const PORT: any = process.env.PORT ?? 6060;
+const PORT: any = process.env.PORT ?? 4000;
 httpServer.listen(PORT, () => console.log(`The server is running on port ${PORT}`));
