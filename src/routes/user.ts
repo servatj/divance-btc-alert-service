@@ -25,6 +25,7 @@ const router = express.Router();
  *     "firstName": "josep",
  *     "lastName": "Servat",
  *     "email": "servat@gimail.com",
+ *     "password": "password"
  *     "createdAt": "2019-09-12",
  *     "updatedAt": "2019-11-12"
  *   }
