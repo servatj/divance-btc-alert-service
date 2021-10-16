@@ -1,0 +1,24 @@
+{
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "contributors": [
+    {
+      "login": "servatj",
+      "name": "Josep Servat",
+      "avatar_url": "https://avatars.githubusercontent.com/u/3521485?v=4",
+      "profile": "http://servatj.me",
+      "contributions": [
+        "infra"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "projectName": "divance-btc-alert-service",
+  "projectOwner": "divance-cryptos",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "skipCi": true
+}
