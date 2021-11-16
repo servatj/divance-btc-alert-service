@@ -45,9 +45,6 @@ const options = {
     baseDir: path.resolve('./'),
   }
 
-  console.log(path.resolve('./'))
-
-
   const config = {
       jsdocSwagger: options
   }

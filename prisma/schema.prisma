@@ -29,3 +29,12 @@ model Alert {
   user User? @relation(fields: [userId], references: [id])
   userId  Int?
 }
+
+model Btc {
+  price_date DateTime @unique
+  symbol String
+  open Float
+  high Float
+  low Float
+  close Float
+}

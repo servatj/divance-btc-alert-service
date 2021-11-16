@@ -4,6 +4,7 @@ import express, { Express } from 'express';
 import expressJSDocSwagger from 'express-jsdoc-swagger';
 import morgan from 'morgan';
 import routesUser from './routes/user';
+import routesBtc from './routes/bitcoin';
 import swaggerUi from 'swagger-ui-express';
 
 
@@ -34,6 +35,7 @@ router.use((req, res, next) => {
 
 /** Routes */
 router.use('/', routesUser);
+router.use('/', routesBtc)
 
 /** Error handling */
 router.use((req, res, next) => {
