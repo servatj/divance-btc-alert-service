@@ -26,7 +26,7 @@
      *   }
      * ]
      */
-    router.get('/btc', controller.getBtcAllTimeHigh);
+    // router.get('/btc', controller.getBtcAllTimeHigh);
     router.get('/ath', controller.getAth);
     router.get('/updatebtc', controller.updateBtcTable);
 
