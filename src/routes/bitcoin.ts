@@ -29,5 +29,6 @@
     // router.get('/btc', controller.getBtcAllTimeHigh);
     router.get('/ath', controller.getAth);
     router.get('/updatebtc', controller.updateBtcTable);
+    router.get('/posttelegram', controller.postTgATH);
 
     export = router;

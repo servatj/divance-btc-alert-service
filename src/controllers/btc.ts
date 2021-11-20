@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 const rp = require("request-promise");
 import { PrismaClient } from "@prisma/client";
-
+import postTgAth from "../lib/telegram";
 const prisma = new PrismaClient();
 
 const Binance = require("node-binance-api");
@@ -91,4 +91,11 @@ const ath = async (req: Request, res: Response) => {
   }
 };
 
-export default { getAth, updateBtcTable };
+const postTgATH = async (req: Request, res: Response) => {
+  postTgAth('69000');
+  return res.status(200).json({
+    message: 'posted',
+  });
+}
+
+export default { getAth, updateBtcTable, postTgATH };
