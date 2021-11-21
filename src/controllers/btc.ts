@@ -14,7 +14,7 @@ const updateBtcTable = async (req: Request, res: Response) => {
   try {
     // get data
     const ticks = await binance.candlesticks("BTCUSDT", "1d");
-    let lastTick = ticks[ticks.length - 2];
+    let lastTick = ticks[ticks.length - 1];
     let [
       time,
       open,
@@ -55,6 +55,36 @@ const updateBtcTable = async (req: Request, res: Response) => {
     });
 
 
+    const max = await prisma.btc.aggregate({
+      _max: {
+        high: true,
+      },
+    });
+
+    const previousMax = await prisma.btc_ath.aggregate({
+      _max: {
+        high: true,
+      },
+    });
+
+    if (previousMax < max) {
+      await prisma.btc.deleteMany({
+        where: {
+          symbol: 'BTC/USDT'
+        },
+      });
+
+      await prisma.btc_ath.create( {
+        data: {
+          price_date: new Date(),
+          symbol: 'BTC/USDT',
+          high: Number(max)
+        }
+      });
+
+      postTgAth(max.toString());
+    }
+
     res.status(200).json({
       response: 'Updated'
     })
@@ -67,9 +97,7 @@ const updateBtcTable = async (req: Request, res: Response) => {
 
 const getAth = async (req: Request, res: Response) => {
   try {
-    console.log("get Ath");
-    const btcRows = await prisma.btc.findMany();
-    const max = await prisma.btc.aggregate({
+    const max = await prisma.btc_ath.aggregate({
       _max: {
         high: true,
       },
@@ -98,4 +126,18 @@ const postTgATH = async (req: Request, res: Response) => {
   });
 }
 
-export default { getAth, updateBtcTable, postTgATH };
+const bootstrap = async (req: Request, res: Response) => {
+  const { price } = req.body;
+  await prisma.btc_ath.create( {
+    data: {
+      price_date: new Date('2021-11-10'),
+      symbol: 'BTC/USDT',
+      high: 65000
+    }
+  });
+  return res.status(200).json({
+    message: 'bootstraped',
+  });
+}
+
+export default { getAth, updateBtcTable, postTgATH, bootstrap };

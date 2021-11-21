@@ -30,5 +30,7 @@
     router.get('/ath', controller.getAth);
     router.get('/updatebtc', controller.updateBtcTable);
     router.get('/posttelegram', controller.postTgATH);
+    router.post('/bootstrap', controller.bootstrap);
+
 
     export = router;

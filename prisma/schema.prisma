@@ -38,3 +38,9 @@ model Btc {
   low Float
   close Float
 }
+
+model btc_ath {
+  price_date DateTime @unique
+  symbol String @unique
+  high Float
+}
