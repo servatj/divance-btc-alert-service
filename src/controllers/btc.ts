@@ -102,13 +102,18 @@ const updateBtcTable = async (req: Request, res: Response) => {
 
 const getAth = async (req: Request, res: Response) => {
   try {
-    const max = await prisma.btc_ath.aggregate({
-      _max: {
+    const ath: object | null = await prisma.btc_ath.findUnique({
+      where: {
+        symbol: 'BTC/USDT',
+      },
+      select: {
+        price_date: true,
         high: true,
       },
-    });
+    })
+
     return res.status(200).json({
-      rows: max,
+      rows: ath,
     });
   } catch (error) {
     console.log(error);
