@@ -87,7 +87,7 @@ const updateBtcTable = async (req: Request, res: Response) => {
         }
       });
 
-      postTgAth(max.toString());
+      postTgAth(currentMax.toString());
     }
 
     res.status(200).json({
