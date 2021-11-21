@@ -16,7 +16,9 @@ bot.on('message', (msg: any) => {
 
 
 const postTgAth = (athValue: string) => {
+  console.log(athValue);
   const bodyMessage = '🦊 New Bitcoin *ATH* 💲' +  athValue + '💲 ![🚀🚀🚀🚀](https://i.ibb.co/wKbdk4P/rocket.gif)' + ' ' + new Date().toDateString();
+  console.log(bodyMessage)
   bot.sendMessage(process.env.BOT_CHANNEL, bodyMessage, { parse_mode : "MarkdownV2" });
 }
 
