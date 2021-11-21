@@ -73,7 +73,7 @@ const updateBtcTable = async (req: Request, res: Response) => {
 
     console.log('previous', max)
     if (previousMax < currentMax) {
-      await prisma.btc.deleteMany({
+      await prisma.btc_ath.deleteMany({
         where: {
           symbol: 'BTC/USDT'
         },
