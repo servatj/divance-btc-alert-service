@@ -53,23 +53,26 @@ const updateBtcTable = async (req: Request, res: Response) => {
     await prisma.btc.create({
       data: btcRow
     });
+    let max;
 
-
-    const max = await prisma.btc.aggregate({
+    max = await prisma.btc.aggregate({
       _max: {
         high: true,
       },
     });
 
-    console.log('max', max)
-    const previousMax = await prisma.btc_ath.aggregate({
+    const currentMax = max._max.high || 0;
+    console.log('max', currentMax)
+    max = await prisma.btc_ath.aggregate({
       _max: {
         high: true,
       },
     });
+
+    const previousMax = max._max.high || 0;
 
     console.log('previous', max)
-    if (previousMax < max) {
+    if (previousMax < currentMax) {
       await prisma.btc.deleteMany({
         where: {
           symbol: 'BTC/USDT'
@@ -80,7 +83,7 @@ const updateBtcTable = async (req: Request, res: Response) => {
         data: {
           price_date: new Date(),
           symbol: 'BTC/USDT',
-          high: Number(max)
+          high: currentMax
         }
       });
 
