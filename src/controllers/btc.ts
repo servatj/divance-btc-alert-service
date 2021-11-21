@@ -61,12 +61,14 @@ const updateBtcTable = async (req: Request, res: Response) => {
       },
     });
 
+    console.log('max', max)
     const previousMax = await prisma.btc_ath.aggregate({
       _max: {
         high: true,
       },
     });
 
+    console.log('previous', max)
     if (previousMax < max) {
       await prisma.btc.deleteMany({
         where: {
