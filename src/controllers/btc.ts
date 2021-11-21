@@ -116,16 +116,9 @@ const getAth = async (req: Request, res: Response) => {
   }
 };
 
-const ath = async (req: Request, res: Response) => {
-  try {
-  } catch (error) {
-    console.log(error);
-    res.status(500).send(`Error ${error}`);
-  }
-};
-
 const postTgATH = async (req: Request, res: Response) => {
-  postTgAth('69000');
+  const { price } = req.body;
+  postTgAth(price);
   return res.status(200).json({
     message: 'posted',
   });

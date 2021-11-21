@@ -16,7 +16,7 @@ bot.on('message', (msg: any) => {
 
 
 const postTgAth = (athValue: string) => {
-  bot.sendMessage('-1001502784084', '🦊 New Bitcoin *ATH* 💲' +  athValue + '💲 ![🚀🚀🚀🚀](https://i.ibb.co/wKbdk4P/rocket.gif)', { parse_mode : "Markdown" });
+  bot.sendMessage(process.env.BOT_CHANNEL, '🦊 New Bitcoin *ATH* 💲' +  athValue + '💲 ![🚀🚀🚀🚀](https://i.ibb.co/wKbdk4P/rocket.gif)', { parse_mode : "MarkdownV2" });
 }
 
 export default postTgAth;
