@@ -9,5 +9,16 @@ services:
       - postgres:/var/lib/postgresql/data
     ports:
       - '5432:5432'
+  db_test:
+    image: postgres:13
+    restart: always
+    container_name: integration-tests-prisma
+    ports:
+      - '5433:5432'
+    environment:
+      POSTGRES_USER: prisma
+      POSTGRES_PASSWORD: prisma
+      POSTGRES_DB: tests
+
 volumes:
   postgres:
