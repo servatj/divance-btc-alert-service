@@ -39,6 +39,7 @@ const updateBtcTable = async (req: Request, res: Response) => {
       close: Number(close)
     }
 
+    console.log(btcRow)
     console.log(time);
     console.log(new Date(time), new Date(closeTime), high);
 
@@ -101,6 +102,25 @@ const updateBtcTable = async (req: Request, res: Response) => {
 };
 
 const getAth = async (req: Request, res: Response) => {
+  try {
+    const ath: object | null = await prisma.btc_ath.findMany({
+      select: {
+        symbol: true,
+        price_date: true,
+        high: true,
+      },
+    })
+
+    return res.status(200).json({
+      rows: ath,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ error });
+  }
+};
+
+const getAthOld = async (req: Request, res: Response) => {
   try {
     const ath: object | null = await prisma.btc_ath.findUnique({
       where: {
