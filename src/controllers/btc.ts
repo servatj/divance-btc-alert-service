@@ -110,7 +110,6 @@ const getAth = async (req: Request, res: Response) => {
         high: true,
       },
     })
-
     return res.status(200).json({
       rows: ath,
     });
