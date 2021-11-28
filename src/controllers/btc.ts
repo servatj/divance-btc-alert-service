@@ -37,63 +37,61 @@ const processUpdate = async (pair: string, symbol: string) => {
     close: Number(close),
   };
 
-  // // delete
-  // await prisma.btc.deleteMany({
-  //   where: {
-  //     price_date: new Date(time),
-  //     symbol: symbol
-  //   },
-  // });
+  // delete
+  await prisma.btc.deleteMany({
+    where: {
+      price_date: new Date(time),
+      symbol: symbol
+    },
+  });
 
-  // // insert
-  // await prisma.btc.create({
-  //   data: row,
-  // });
+  // insert
+  await prisma.btc.create({
+    data: row,
+  });
 
+  console.log('🦊🦊 insert')
+  // get the current time max
+  let max;
+  max = await prisma.btc.groupBy({
+    by: ['symbol'],
+    _max: {
+      high: true,
+    },
+  });
 
-  // console.log('🦊🦊 insert')
-  // // get the current time max
-  // let max;
-  // max = await prisma.btc.groupBy({
-  //   by: ['symbol'],
-  //   _max: {
-  //     high: true,
-  //   },
-  // });
+  const currentMax = max[0]._max.high || 0;
+  console.log("max", currentMax);
 
-  // const currentMax = max[0]._max.high || 0;
-  // console.log("max", currentMax);
+  // get the previous max
+  let maxPrevious;
+  maxPrevious = await prisma.btc_ath.findFirst({
+    where: {
+      symbol: symbol,
+    },
+    select: {
+      high: true,
+    },
+  }) || { high: 0 };
 
-  // // get the previous max
-  // let maxPrevious;
-  // maxPrevious = await prisma.btc_ath.findFirst({
-  //   where: {
-  //     symbol: symbol,
-  //   },
-  //   select: {
-  //     high: true,
-  //   },
-  // }) || { high: 0 };
+  const previousMax = maxPrevious.high;
 
-  // const previousMax = maxPrevious.high;
+  if (previousMax < currentMax) {
+    await prisma.btc_ath.deleteMany({
+      where: {
+        symbol: symbol,
+      },
+    });
 
-  // console.log("previous", previousMax);
-  // if (previousMax < currentMax) {
-  //   await prisma.btc_ath.deleteMany({
-  //     where: {
-  //       symbol: symbol,
-  //     },
-  //   });
-
-  //   await prisma.btc_ath.create({
-  //     data: {
-  //       price_date: new Date(),
-  //       symbol: symbol,
-  //       high: currentMax,
-  //     },
-  //   });
-  //  // postTgAth(currentMax.toString());
-  // }
+    await prisma.btc_ath.create({
+      data: {
+        price_date: new Date(),
+        symbol: symbol,
+        high: currentMax,
+      },
+    });
+   postTgAth(currentMax.toString());
+  }
 };
 
 const updateAggregatesTable = async (req: Request, res: Response) => {
@@ -105,6 +103,10 @@ const updateAggregatesTable = async (req: Request, res: Response) => {
     supportedPairs.forEach((pair) => {
       processUpdate(pair.pair, pair.symbol);
     })
+
+    res.status(200).json({
+      response: "Updated",
+    });
   } catch (error) {
     console.log(error);
     res.status(500).send({ error });
@@ -220,26 +222,26 @@ const getAth = async (req: Request, res: Response) => {
   }
 };
 
-const getAthOld = async (req: Request, res: Response) => {
-  try {
-    const ath: any = await prisma.btc_ath.findUnique({
-      where: {
-        symbol: "BTC/USDT",
-      },
-      select: {
-        price_date: true,
-        high: true,
-      },
-    });
+// const getAthOld = async (req: Request, res: Response) => {
+//   try {
+//     const ath: any = await prisma.btc_ath.findUnique({
+//       where: {
+//         symbol: 'BTC/USDT'
+//       },
+//       select: {
+//         price_date: true,
+//         high: true,
+//       },
+//     });
 
-    return res.status(200).json({
-      rows: ath,
-    });
-  } catch (error) {
-    console.log(error);
-    res.status(500).send({ error });
-  }
-};
+//     return res.status(200).json({
+//       rows: ath,
+//     });
+//   } catch (error) {
+//     console.log(error);
+//     res.status(500).send({ error });
+//   }
+// };
 
 const postTgATH = async (req: Request, res: Response) => {
   const { price } = req.body;
