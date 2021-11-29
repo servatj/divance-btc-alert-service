@@ -98,7 +98,7 @@ const updateAggregatesTable = async (req: Request, res: Response) => {
   try {
     const supportedPairs = [
       { symbol: "BTC/USDT", pair: "BTCUSDT" },
-      { symbol: "EUR/USDT", pair: "EURUSDT" },
+      { symbol: "ETH/USDT", pair: "ETHUSDT" },
     ];
     supportedPairs.forEach((pair) => {
       processUpdate(pair.pair, pair.symbol);
