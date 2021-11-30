@@ -245,7 +245,7 @@ const getAth = async (req: Request, res: Response) => {
 
 const postTgATH = async (req: Request, res: Response) => {
   const { price } = req.body;
-  postTgAth(price);
+  postTgAth(price, '');
   return res.status(200).json({
     message: "posted",
   });
