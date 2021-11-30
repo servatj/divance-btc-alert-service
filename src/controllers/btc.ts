@@ -90,7 +90,7 @@ const processUpdate = async (pair: string, symbol: string) => {
         high: currentMax,
       },
     });
-   postTgAth(currentMax.toString());
+   postTgAth(currentMax.toString(), symbol);
   }
 };
 
@@ -191,7 +191,7 @@ const updateBtcTable = async (req: Request, res: Response) => {
         },
       });
 
-      postTgAth(currentMax.toString());
+      postTgAth(currentMax.toString(), 'bitcoin');
     }
 
     res.status(200).json({
