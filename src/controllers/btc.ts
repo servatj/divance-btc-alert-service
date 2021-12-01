@@ -1,8 +1,9 @@
 import { Request, Response } from "express";
-const rp = require("request-promise");
 import { PrismaClient } from "@prisma/client";
 import postTgAth from "../lib/telegram";
 const prisma = new PrismaClient();
+// todo use axios everywhere
+const axios = require('axios');
 
 const Binance = require("node-binance-api");
 const binance = new Binance().options({
@@ -10,7 +11,8 @@ const binance = new Binance().options({
   APISECRET: process.env.BINANCE_SECRET,
 });
 
-const processUpdate = async (pair: string, symbol: string) => {
+
+const getBinancePrice = async (symbol: string, pair: string) => {
   const ticks = await binance.candlesticks(pair, "1d");
   let lastTick = ticks[ticks.length - 1];
   let [
@@ -28,19 +30,47 @@ const processUpdate = async (pair: string, symbol: string) => {
     ignored,
   ] = lastTick;
 
-  const row = {
+  return  {
     price_date: new Date(time),
     symbol: symbol,
-    open: Number(open),
-    high: Number(high),
-    low: Number(low),
-    close: Number(close),
+    open: parseFloat(open),
+    high: parseFloat(high),
+    low: parseFloat(low),
+    close: parseFloat(close),
   };
+}
+
+
+const getAscendexPrice = async (symbol: string) => {
+  const { data } = await axios.get(`https://ascendex.com/api/pro/v1/barhist?symbol=${symbol}&interval=1D`);
+  let lastPrice = data.data[data.data.length - 1];
+
+  return  {
+    price_date: new Date(lastPrice.data.ts),
+    symbol: symbol,
+    open: parseFloat(lastPrice.data.o),
+    high: parseFloat(lastPrice.data.h),
+    low: parseFloat(lastPrice.data.l),
+    close: parseFloat(lastPrice.data.c),
+  };
+}
+
+const processUpdate = async (pair: string, symbol: string) => {
+
+  let row;
+
+  // TODO implement pairs in different exchanges
+  if(pair === 'ZIGUSDT') {
+    row = await getAscendexPrice(symbol)
+  } else {
+    row = await getBinancePrice(symbol, pair)
+  }
+
 
   // delete
   await prisma.btc.deleteMany({
     where: {
-      price_date: new Date(time),
+      price_date: new Date(row.price_date),
       symbol: symbol
     },
   });
@@ -101,104 +131,14 @@ const updateAggregatesTable = async (req: Request, res: Response) => {
       { symbol: "ETH/USDT", pair: "ETHUSDT" },
       { symbol: "ZIG/USDT", pair: "ZIGUSDT" }
     ];
-    supportedPairs.forEach((pair) => {
-      processUpdate(pair.pair, pair.symbol);
-    })
 
-    res.status(200).json({
-      response: "Updated",
-    });
-  } catch (error) {
-    console.log(error);
-    res.status(500).send({ error });
-  }
-};
-
-const updateBtcTable = async (req: Request, res: Response) => {
-  try {
-    // get data
-    const ticks = await binance.candlesticks("BTCUSDT", "1d");
-    let lastTick = ticks[ticks.length - 1];
-    let [
-      time,
-      open,
-      high,
-      low,
-      close,
-      volume,
-      closeTime,
-      assetVolume,
-      trades,
-      buyBaseVolume,
-      buyAssetVolume,
-      ignored,
-    ] = lastTick;
-
-    const btcRow = {
-      price_date: new Date(time),
-      symbol: "BTC/USDT",
-      open: parseFloat(open),
-      high: parseFloat(high),
-      low: parseFloat(low),
-      close: parseFloat(close),
-    };
-
-    console.log(btcRow);
-    console.log(time);
-    console.log(new Date(time), new Date(closeTime), high);
-
-    // delete
-    await prisma.btc.deleteMany({
-      where: {
-        price_date: new Date(time),
-      },
-    });
-
-    // insert
-    await prisma.btc.create({
-      data: btcRow,
-    });
-    let max;
-
-    max = await prisma.btc.aggregate({
-      _max: {
-        high: true,
-      },
-    });
-
-    const currentMax = max._max.high || 0;
-    console.log("max", currentMax);
-    max = await prisma.btc_ath.aggregate({
-      _max: {
-        high: true,
-      },
-    });
-
-    const previousMax = max._max.high || 0;
-
-    console.log("previous", previousMax);
-    if (previousMax < currentMax) {
-      await prisma.btc_ath.deleteMany({
-        where: {
-          symbol: "BTC/USDT",
-        },
-      });
-
-      await prisma.btc_ath.create({
-        data: {
-          price_date: new Date(),
-          symbol: "BTC/USDT",
-          high: currentMax,
-        },
-      });
-
-      postTgAth(currentMax.toString(), 'bitcoin');
+    for(const pair of supportedPairs) {
+      await  processUpdate(pair.pair, pair.symbol);
     }
 
     res.status(200).json({
       response: "Updated",
     });
-    // litescript
   } catch (error) {
     console.log(error);
     res.status(500).send({ error });
@@ -223,27 +163,6 @@ const getAth = async (req: Request, res: Response) => {
   }
 };
 
-// const getAthOld = async (req: Request, res: Response) => {
-//   try {
-//     const ath: any = await prisma.btc_ath.findUnique({
-//       where: {
-//         symbol: 'BTC/USDT'
-//       },
-//       select: {
-//         price_date: true,
-//         high: true,
-//       },
-//     });
-
-//     return res.status(200).json({
-//       rows: ath,
-//     });
-//   } catch (error) {
-//     console.log(error);
-//     res.status(500).send({ error });
-//   }
-// };
-
 const postTgATH = async (req: Request, res: Response) => {
   const { price } = req.body;
   postTgAth(price, '');
@@ -266,4 +185,4 @@ const bootstrap = async (req: Request, res: Response) => {
   });
 };
 
-export default { getAth, updateBtcTable, postTgATH, bootstrap, updateAggregatesTable };
+export default { getAth, postTgATH, bootstrap, updateAggregatesTable };
