@@ -137,10 +137,10 @@ const updateBtcTable = async (req: Request, res: Response) => {
     const btcRow = {
       price_date: new Date(time),
       symbol: "BTC/USDT",
-      open: Number(open),
-      high: Number(high),
-      low: Number(low),
-      close: Number(close),
+      open: parseFloat(open),
+      high: parseFloat(high),
+      low: parseFloat(low),
+      close: parseFloat(close),
     };
 
     console.log(btcRow);
