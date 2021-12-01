@@ -90,7 +90,10 @@ const processUpdate = async (pair: string, symbol: string) => {
     },
   });
 
-  const currentMax = max[0]._max.high || 0;
+  const getCurrenMax = max.find(pair => pair.symbol === symbol) || { _max : { high: 0 } }
+  console.log(getCurrenMax)
+
+  const currentMax = getCurrenMax._max.high || 0;
   console.log("max", currentMax);
 
   // get the previous max
@@ -112,7 +115,6 @@ const processUpdate = async (pair: string, symbol: string) => {
         symbol: symbol,
       },
     });
-
     await prisma.btc_ath.create({
       data: {
         price_date: new Date(),
@@ -122,6 +124,7 @@ const processUpdate = async (pair: string, symbol: string) => {
     });
    postTgAth(currentMax.toString(), symbol);
   }
+  console.log(previousMax, currentMax)
 };
 
 const updateAggregatesTable = async (req: Request, res: Response) => {
