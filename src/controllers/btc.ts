@@ -11,6 +11,12 @@ const binance = new Binance().options({
   APISECRET: process.env.BINANCE_SECRET,
 });
 
+const pairs = [
+  { symbol: "BTC/USDT", pair: "BTCUSDT" },
+  { symbol: "ETH/USDT", pair: "ETHUSDT" },
+  { symbol: "ZIG/USDT", pair: "ZIGUSDT" },
+  { symbol: "LUNA/USDT", pair: "LUNAUSDT" }
+]
 
 const getBinancePrice = async (symbol: string, pair: string) => {
   const ticks = await binance.candlesticks(pair, "1d");
@@ -127,13 +133,14 @@ const processUpdate = async (pair: string, symbol: string) => {
   console.log(previousMax, currentMax)
 };
 
+const getCurrentPairs = async (req: Request, res: Response) => {
+  return res.status(200).json(pairs);
+}
+
+
 const updateAggregatesTable = async (req: Request, res: Response) => {
   try {
-    const supportedPairs = [
-      { symbol: "BTC/USDT", pair: "BTCUSDT" },
-      { symbol: "ETH/USDT", pair: "ETHUSDT" },
-      { symbol: "ZIG/USDT", pair: "ZIGUSDT" }
-    ];
+    const supportedPairs = pairs;
 
     for(const pair of supportedPairs) {
       await  processUpdate(pair.pair, pair.symbol);
@@ -188,4 +195,10 @@ const bootstrap = async (req: Request, res: Response) => {
   });
 };
 
-export default { getAth, postTgATH, bootstrap, updateAggregatesTable };
+export default {
+  getAth,
+  postTgATH,
+  bootstrap,
+  getCurrentPairs,
+  updateAggregatesTable
+};

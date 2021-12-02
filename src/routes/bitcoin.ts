@@ -31,5 +31,6 @@
     router.post('/updateAth', controller.updateAggregatesTable);
     router.post('/posttelegram', controller.postTgATH);
     router.post('/bootstrap', controller.bootstrap);
+    router.get('/pairs', controller.getCurrentPairs);
 
     export = router;
