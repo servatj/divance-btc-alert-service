@@ -15,7 +15,8 @@ const pairs = [
   { symbol: "BTC/USDT", pair: "BTCUSDT" },
   { symbol: "ETH/USDT", pair: "ETHUSDT" },
   { symbol: "ZIG/USDT", pair: "ZIGUSDT" },
-  { symbol: "LUNA/USDT", pair: "LUNAUSDT" }
+  { symbol: "LUNA/USDT", pair: "LUNAUSDT" },
+  { symbol: "ATOM/USDT", pair: "ATOMUSDT" }
 ]
 
 const getBinancePrice = async (symbol: string, pair: string) => {
