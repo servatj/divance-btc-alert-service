@@ -1,15 +1,11 @@
 import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
 import postTgAth from "../lib/telegram";
+import { getAscendexPrice } from '../services/ascendexService';
+import { getBinancePrice } from '../services/binanceService';
+import Token from '../models/token';
 const prisma = new PrismaClient();
 // todo use axios everywhere
-const axios = require('axios');
-
-const Binance = require("node-binance-api");
-const binance = new Binance().options({
-  APIKEY: process.env.BINANCE_KEY,
-  APISECRET: process.env.BINANCE_SECRET,
-});
 
 const pairs = [
   { symbol: "BTC/USDT", pair: "BTCUSDT" },
@@ -19,49 +15,6 @@ const pairs = [
   { symbol: "ATOM/USDT", pair: "ATOMUSDT" },
   { symbol: "SOL/USDT", pair: "SOLUSDT" }
 ]
-
-const getBinancePrice = async (symbol: string, pair: string) => {
-  const ticks = await binance.candlesticks(pair, "1d");
-  let lastTick = ticks[ticks.length - 1];
-  let [
-    time,
-    open,
-    high,
-    low,
-    close,
-    volume,
-    closeTime,
-    assetVolume,
-    trades,
-    buyBaseVolume,
-    buyAssetVolume,
-    ignored,
-  ] = lastTick;
-
-  return  {
-    price_date: new Date(time),
-    symbol: symbol,
-    open: parseFloat(open),
-    high: parseFloat(high),
-    low: parseFloat(low),
-    close: parseFloat(close),
-  };
-}
-
-
-const getAscendexPrice = async (symbol: string) => {
-  const { data } = await axios.get(`https://ascendex.com/api/pro/v1/barhist?symbol=${symbol}&interval=1D`);
-  let lastPrice = data.data[data.data.length - 1];
-
-  return  {
-    price_date: new Date(lastPrice.data.ts),
-    symbol: symbol,
-    open: parseFloat(lastPrice.data.o),
-    high: parseFloat(lastPrice.data.h),
-    low: parseFloat(lastPrice.data.l),
-    close: parseFloat(lastPrice.data.c),
-  };
-}
 
 const processUpdate = async (pair: string, symbol: string) => {
 
@@ -139,7 +92,6 @@ const getCurrentPairs = async (req: Request, res: Response) => {
   return res.status(200).json(pairs);
 }
 
-
 const updateAggregatesTable = async (req: Request, res: Response) => {
   try {
     const supportedPairs = pairs;
@@ -159,15 +111,8 @@ const updateAggregatesTable = async (req: Request, res: Response) => {
 
 const getAth = async (req: Request, res: Response) => {
   try {
-    const ath: object | null = await prisma.btc_ath.findMany({
-      select: {
-        symbol: true,
-        price_date: true,
-        high: true,
-      },
-    });
     return res.status(200).json({
-      rows: ath,
+      rows: await Token.getTokenList(),
     });
   } catch (error) {
     console.log(error);
