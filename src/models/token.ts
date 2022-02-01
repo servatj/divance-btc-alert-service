@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
-interface TokenInfo {
+export interface TokenInfo {
   price_date: Date;
   symbol: String;
   high: Number;
@@ -31,5 +31,5 @@ const getTokenList = async (): Promise<TokenInfo[] | null> => {
 }
 
 export default {
-  getTokenList
+  getTokenList,
 }

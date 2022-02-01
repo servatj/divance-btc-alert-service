@@ -3,7 +3,9 @@ import { PrismaClient } from "@prisma/client";
 import postTgAth from "../lib/telegram";
 import { getAscendexPrice } from '../services/ascendexService';
 import { getBinancePrice } from '../services/binanceService';
-import Token from '../models/token';
+import Token, { TokenInfo } from '../models/token';
+import TokenCandle, { TokenTypeCandle } from '../models/tokenCandles'
+
 const prisma = new PrismaClient();
 // todo use axios everywhere
 
@@ -17,32 +19,16 @@ const pairs = [
 ]
 
 const processUpdate = async (pair: string, symbol: string) => {
+  let row: TokenTypeCandle;
 
-  let row;
-
-  // TODO implement pairs in different exchanges
   if(pair === 'ZIGUSDT') {
     row = await getAscendexPrice(symbol)
   } else {
     row = await getBinancePrice(symbol, pair)
   }
 
+  TokenCandle.upsert(symbol, row);
 
-  // delete
-  await prisma.btc.deleteMany({
-    where: {
-      price_date: new Date(row.price_date),
-      symbol: symbol
-    },
-  });
-
-  // insert
-  await prisma.btc.create({
-    data: row,
-  });
-
-  console.log('🦊🦊 insert')
-  // get the current time max
   let max;
   max = await prisma.btc.groupBy({
     by: ['symbol'],
@@ -52,10 +38,7 @@ const processUpdate = async (pair: string, symbol: string) => {
   });
 
   const getCurrenMax = max.find(pair => pair.symbol === symbol) || { _max : { high: 0 } }
-  console.log(getCurrenMax)
-
   const currentMax = getCurrenMax._max.high || 0;
-  console.log("max", currentMax);
 
   // get the previous max
   let maxPrevious;
@@ -71,11 +54,13 @@ const processUpdate = async (pair: string, symbol: string) => {
   const previousMax = maxPrevious.high;
 
   if (previousMax < currentMax) {
+
     await prisma.btc_ath.deleteMany({
       where: {
         symbol: symbol,
       },
     });
+
     await prisma.btc_ath.create({
       data: {
         price_date: new Date(),
@@ -83,7 +68,8 @@ const processUpdate = async (pair: string, symbol: string) => {
         high: currentMax,
       },
     });
-   postTgAth(currentMax.toString(), symbol);
+
+    postTgAth(currentMax.toString(), symbol);
   }
   console.log(previousMax, currentMax)
 };
@@ -112,7 +98,7 @@ const updateAggregatesTable = async (req: Request, res: Response) => {
 const getAth = async (req: Request, res: Response) => {
   try {
     return res.status(200).json({
-      rows: await Token.getTokenList(),
+      rows: await Token.getTokenList() as TokenInfo[],
     });
   } catch (error) {
     console.log(error);
