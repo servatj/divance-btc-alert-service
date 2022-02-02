@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-import { PrismaClient } from "@prisma/client";
 import postTgAth from "../lib/telegram";
 import { getAscendexPrice } from '../services/ascendexService';
 import { getBinancePrice } from '../services/binanceService';
@@ -36,8 +35,6 @@ const processUpdate = async (pair: string, symbol: string) => {
     await Token.updateAth(symbol, currentMax);
     postTgAth(currentMax.toString(), symbol);
   }
-
-  console.log(previousMax, currentMax)
 };
 
 const getCurrentPairs = async (req: Request, res: Response) => {
