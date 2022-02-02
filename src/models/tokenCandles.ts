@@ -10,6 +10,15 @@ export interface TokenTypeCandle {
   close: number;
 }
 
+export type HighPrice = {
+  high: Number | null ;
+}
+
+export type MaxPrice = {
+  symbol: string,
+  _max: { high: Number }
+}
+
 const addToken = () => {
   return 'Not Implemented'
 }
@@ -21,6 +30,13 @@ const RemoveToken = () => {
 const insertTokenPrice = () => {
 
 }
+
+const getHighestPrice = async () => await prisma.btc.groupBy({
+  by: ['symbol'],
+  _max: {
+    high: true,
+  },
+});
 
 const upsert = async (symbol: string, row: TokenTypeCandle) : Promise<void> => {
     await prisma.btc.deleteMany({
@@ -37,4 +53,5 @@ const upsert = async (symbol: string, row: TokenTypeCandle) : Promise<void> => {
 
 export default {
   upsert,
+  getHighestPrice
 }
