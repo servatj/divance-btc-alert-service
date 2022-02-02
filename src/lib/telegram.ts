@@ -19,7 +19,7 @@ const postTgAth = (athValue: string, symbol: string) => {
   console.log(athValue);
   const bodyMessage = `🦊 New ${symbol} *ATH* 💲` +  athValue + '💲 ![🚀🚀🚀🚀](https://i.ibb.co/wKbdk4P/rocket.gif)' + ' ' + new Date().toDateString();
   console.log(bodyMessage)
-  bot.sendMessage(process.env.BOT_CHANNEL, bodyMessage, { parse_mode : "Markdown" });
+  //bot.sendMessage(process.env.BOT_CHANNEL, bodyMessage, { parse_mode : "Markdown" });
 }
 
 export default postTgAth;
