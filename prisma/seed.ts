@@ -3,29 +3,22 @@ import faker from 'faker';
 
 const prisma = new PrismaClient();
 
-const seedUsers = async () => {
-    console.log('Seeding users');
-    await prisma.user.deleteMany();
+const seedTokens = async () => {
+    await prisma.token_ath.create({ data: { price_date: new Date('2021-11-10 10:31:02.643'), symbol: 'BTC/USDT',  high: 69000, symbolId: 1 }});
+    await prisma.token_ath.create({ data: { price_date: new Date('2021-12-27 01:48:04.569'), symbol: 'LUNA/USDT', high: 103.6, symbolId: 2 }});
+    await prisma.token_ath.create({ data: { price_date: new Date('2021-09-05 01:36:01.677'), symbol: 'ZIG/USDT',  high: 0.2129, symbolId: 3 }});
+    await prisma.token_ath.create({ data: { price_date: new Date('2021-11-10 00:03:02.079'), symbol: 'ETH/USDT',  high: 4.868, symbolId: 4 }});
+    await prisma.token_ath.create({ data: { price_date: new Date('2021-12-22 20:57:04.598'), symbol: 'SOL/USDT',  high: 260.06, symbolId: 5 }});
+    await prisma.token_ath.create({ data: { price_date: new Date('2021-09-20 00:00:00.000'), symbol: 'ATOM/USDT', high: 44.7, symbolId: 6 }});
+}
 
-    try {
-        const users = new Array(100);
-        console.log(users.length);
-
-        for(let user of users) {
-            await prisma.user.create({
-                data: {
-                    email: faker.internet.email(),
-                    firstName: faker.name.findName(),
-                    lastName: faker.name.findName(),
-                    password: faker.internet.password(),
-                    createdAt: faker.date.past(),
-                    updatedAt: faker.date.recent()
-                }
-            })
-        }
-    } catch(error) {
-        console.log('error seeding users')
-    }
+const seedInfo = async () => {
+    await prisma.token_info.create({ data: { symbol: 'BTC/USDT', logo_url: 'bitcoin', networks: 'bitcoin', totalSupply: 210000000, fixedSupply: true }});
+    await prisma.token_info.create({ data: { symbol: 'LUNA/USDT', logo_url: 'terra-luna', networks: 'luna', totalSupply: 800000000, fixedSupply: false }});
+    await prisma.token_info.create({ data: { symbol: 'ZIG/USDT', logo_url: 'zignaly', networks: 'zignaly', totalSupply: 2000000000, fixedSupply: true }});
+    await prisma.token_info.create({ data: { symbol: 'ETH/USDT', logo_url: 'ethereum', networks: 'ethereum, ', totalSupply: 1910000000, fixedSupply: false }});
+    await prisma.token_info.create({ data: { symbol: 'SOL/USDT', logo_url: 'solana', networks: 'solana', totalSupply: 314000000, fixedSupply: false }});
+    await prisma.token_info.create({ data: { symbol: 'ATOM/USDT', logo_url: 'cosmos', networks: 'cosmos', totalSupply: 286000000, fixedSupply: false }});
 }
 
 async function main() {
@@ -34,9 +27,9 @@ async function main() {
         return;
     }
     console.log('seeding');
-    await seedUsers();
+    await seedInfo();
+    await seedTokens();
 }
-
 
 (async function run(){
     try {

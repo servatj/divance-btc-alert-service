@@ -19,7 +19,7 @@ model Alert {
 
 model Btc {
   price_date DateTime
-  symbol String
+  symbol String @id
   open Float
   high Float
   low Float
@@ -29,7 +29,34 @@ model Btc {
 
 model btc_ath {
   price_date DateTime
-  symbol String
+  symbol String @id
   high Float
   @@unique([price_date, symbol], name: "pairAthIdentifier")
+}
+
+model btc_ath_aux {
+  symbol String @unique // @id btc_ath @relation(fields: [symbol], references: [symbol])
+  logo_url String
+  networks String
+  totalSupply Float
+  fixedSupply Boolean
+}
+
+model Token_ath {
+  id Int @id @default(autoincrement())
+  price_date DateTime
+  symbol String
+  high Float
+  symbol_info Token_info @relation(fields: [symbolId], references: [id]) // references `id` of `Profile`
+  symbolId Int
+}
+
+model Token_info {
+  id Int @id @default(autoincrement())
+  symbol String
+  logo_url String
+  networks String
+  totalSupply Float
+  fixedSupply Boolean
+  token_ath Token_ath?
 }

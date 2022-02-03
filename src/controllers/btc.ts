@@ -2,8 +2,10 @@ import { Request, Response } from "express";
 import postTgAth from "../lib/telegram";
 import { getAscendexPrice } from '../services/ascendexService';
 import { getBinancePrice } from '../services/binanceService';
-import Token, { TokenInfo } from '../models/token';
+import Token, { TokenAth, TokenInfo} from '../models/token';
 import TokenCandle, { TokenTypeCandle, MaxPrice } from '../models/tokenCandles'
+import { token } from "morgan";
+import { rmSync } from "fs";
 // todo use axios everywhere
 
 const pairs = [
@@ -60,8 +62,9 @@ const updateAggregatesTable = async (req: Request, res: Response) => {
 
 const getAth = async (req: Request, res: Response) => {
   try {
+    const tokenList = []
     return res.status(200).json({
-      rows: await Token.getTokenList() as TokenInfo[],
+      rows: await Token.getTokenList() as TokenAth[],
     });
   } catch (error) {
     console.log(error);
@@ -76,6 +79,24 @@ const postTgATH = async (req: Request, res: Response) => {
     message: "posted",
   });
 };
+
+const addTokenInfo = async (req: Request, res: Response) => {
+  const { symbol, logo_url, networks, totalSupply, fixedSupply } : TokenInfo = req.body;
+
+  const token: Partial<TokenInfo> = {
+    symbol,
+    logo_url,
+    networks,
+    totalSupply,
+    fixedSupply
+  }
+
+  Token.addTokenInfo(token);
+
+  res.status(200).send({
+    message: "added",
+  });
+}
 
 const bootstrap = async (req: Request, res: Response) => {
   const { price } = req.body;
@@ -96,5 +117,6 @@ export default {
   postTgATH,
   bootstrap,
   getCurrentPairs,
-  updateAggregatesTable
+  updateAggregatesTable,
+  addTokenInfo
 };
