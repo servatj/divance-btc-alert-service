@@ -4,8 +4,9 @@ import { getAscendexPrice } from '../services/ascendexService';
 import { getBinancePrice } from '../services/binanceService';
 import Token, { TokenAth, TokenInfo} from '../models/token';
 import TokenCandle, { TokenTypeCandle, MaxPrice } from '../models/tokenCandles'
-import { token } from "morgan";
-import { rmSync } from "fs";
+import Coindesk from '../services/coindesk';
+import Calc from '../lib/calc';
+
 // todo use axios everywhere
 
 const pairs = [
@@ -62,9 +63,20 @@ const updateAggregatesTable = async (req: Request, res: Response) => {
 
 const getAth = async (req: Request, res: Response) => {
   try {
-    const tokenList = []
+    const tokenLists: any = await Token.getTokenList();
+    const addPriceDrop = async (token: any) => {
+      const currentPrice: number = await Coindesk.getCurrentPrice(token.pair) as number;
+      const priceDrop = Math.round(Calc.getDrop(currentPrice, token.high));
+      const priceDropBar = Calc.getDropBar(currentPrice, token.high);
+      const mergedToken = { ...token, priceDrop, priceDropBar, currentPrice };
+      return mergedToken;
+    }
+
+    const tokenListMerged = await Promise.all(tokenLists.map(addPriceDrop));
+
+    console.log(tokenListMerged);
     return res.status(200).json({
-      rows: await Token.getTokenList() as TokenAth[],
+      rows:  await Promise.all(tokenLists.map(addPriceDrop))
     });
   } catch (error) {
     console.log(error);

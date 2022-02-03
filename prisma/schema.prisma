@@ -55,6 +55,7 @@ model Token_info {
   id Int @id @default(autoincrement())
   symbol String
   logo_url String
+  pair String
   networks String
   totalSupply Float
   fixedSupply Boolean
