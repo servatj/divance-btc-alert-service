@@ -68,7 +68,8 @@ const getAth = async (req: Request, res: Response) => {
       const currentPrice: number = await Coindesk.getCurrentPrice(token.pair) as number;
       const priceDrop = Math.round(Calc.getDrop(currentPrice, token.high));
       const priceDropBar = Calc.getDropBar(currentPrice, token.high);
-      const mergedToken = { ...token, priceDrop, priceDropBar, currentPrice };
+      const networks = token.networks.split(',');
+      const mergedToken = { ...token, priceDrop, priceDropBar, currentPrice, networks };
       return mergedToken;
     }
 
