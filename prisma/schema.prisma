@@ -61,3 +61,10 @@ model Token_info {
   fixedSupply Boolean
   token_ath Token_ath?
 }
+
+model Pair {
+  id Int @id @default(autoincrement())
+  symbol String
+  pair String
+  pair_human String
+}

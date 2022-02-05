@@ -61,6 +61,7 @@ const getMaxHigh = async (symbol: string) => await prisma.token_ath.findFirst({
 }) || { high: 0 };
 
 
+
 const getTokenList = async () => {
   const result = await prisma.$queryRaw`
     select

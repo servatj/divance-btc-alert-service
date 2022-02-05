@@ -6,6 +6,7 @@ import Token, { TokenAth, TokenInfo} from '../models/token';
 import TokenCandle, { TokenTypeCandle, MaxPrice } from '../models/tokenCandles'
 import Coindesk from '../services/coindesk';
 import Calc from '../lib/calc';
+import { body, validationResult } from 'express-validator';
 
 // todo use axios everywhere
 

@@ -21,14 +21,24 @@ const seedInfo = async () => {
     await prisma.token_info.create({ data: { symbol: 'ATOM/USDT', logo_url: 'cosmos', pair: 'cosmos', networks: 'cosmos', totalSupply: 286000000, fixedSupply: false }});
 }
 
+const pairInfo = async () => {
+    await prisma.pair.create({ data: { symbol: "BTC/USDT", pair: "BTCUSDT", pair_human: 'bitcoin' }})
+    await prisma.pair.create({ data: { symbol: "ETH/USDT", pair: "ETHUSDT", pair_human: 'ethereum' }})
+    await prisma.pair.create({ data: { symbol: "ZIG/USDT", pair: "ZIGUSDT", pair_human: 'zignaly' }})
+    await prisma.pair.create({ data: { symbol: "LUNA/USDT", pair: "LUNAUSDT", pair_human: 'terra-luna' }})
+    await prisma.pair.create({ data: { symbol: "ATOM/USDT", pair: "ATOMUSDT", pair_human: 'cosmos' }})
+    await prisma.pair.create({ data: { symbol: "SOL/USDT", pair: "SOLUSDT", pair_human: 'solana' }})
+}
+
 async function main() {
     if (!(process.env.NODE_ENV === 'test')) {
         console.log('Only seed on development');
         return;
     }
     console.log('seeding');
-    await seedInfo();
-    await seedTokens();
+    //await seedInfo();
+    //await seedTokens();
+    await pairInfo();
 }
 
 (async function run(){
