@@ -78,6 +78,38 @@ const getTokenList = async () => {
   return result;
 }
 
+const getTokenByPair = async (pair: string) => {
+  console.log('😀' + pair);
+  const result = await prisma.$queryRaw`
+    select
+      "symbolId",
+      price_date,
+      high,
+      logo_url,
+      pair,
+      networks,
+      "totalSupply",
+      "fixedSupply",
+      ta.symbol
+    from alert."Token_ath" ta  inner join alert."Token_info" ti on ta."symbolId" = ti.id
+    where pair = ${pair}
+  `;
+  return result;
+}
+
+
+const getTokenBySymbol = async (symbol: string) => await prisma.token_ath.findFirst({
+  where: {
+    symbol: symbol,
+  },
+  select: {
+    id: true,
+    symbol: true,
+    high: true,
+    price_date: true
+  },
+}) || { id: 0 };
+
 const addToken = async (token: TokenAth) => {
   await prisma.token_ath.create({
     data: {
@@ -108,5 +140,7 @@ export default {
   updateAth,
   insertTokenPrice,
   addToken,
-  addTokenInfo
+  addTokenInfo,
+  getTokenByPair,
+  getTokenBySymbol
 }

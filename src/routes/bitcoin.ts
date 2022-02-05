@@ -28,6 +28,8 @@
      */
     // router.get('/btc', controller.getBtcAllTimeHigh);
     router.get('/ath', controller.getAth);
+    router.get('/ath/pair/:pair', controller.getAthByPair);
+    router.get('/ath/symbol/:symbol', controller.getAthBySymbol);
     router.post('/updateAth', controller.updateAggregatesTable);
     router.post('/posttelegram', controller.postTgATH);
     router.post('/bootstrap', controller.bootstrap);

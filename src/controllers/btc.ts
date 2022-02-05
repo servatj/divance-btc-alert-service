@@ -61,6 +61,54 @@ const updateAggregatesTable = async (req: Request, res: Response) => {
   }
 };
 
+const getAthBySymbol = async (req: Request, res: Response) => {
+  const { symbol } = req.params;
+  try {
+    const token: any = await Token.getTokenBySymbol(symbol);
+    const addPriceDrop = async (token: any) => {
+      const currentPrice: number = await Coindesk.getCurrentPrice(token.pair) as number;
+      const priceDrop = Math.round(Calc.getDrop(currentPrice, token.high));
+      const priceDropBar = Calc.getDropBar(currentPrice, token.high);
+      const networks = token.networks.split(',');
+      const mergedToken = { ...token, priceDrop, priceDropBar, currentPrice, networks };
+      return mergedToken;
+    }
+
+    const tokenListMerged = await addPriceDrop(token);
+    return res.status(200).json({
+      tokenListMerged
+    });
+  } catch (error) {
+    res.status(500).send({ error });
+  }
+};
+
+const getAthByPair = async (req: Request, res: Response) => {
+  const { pair } = req.params;
+  try {
+    const token: any = await Token.getTokenByPair(pair);
+    console.log('token', token);
+
+    const addPriceDrop = async (token: any) => {
+      const currentPrice: number = await Coindesk.getCurrentPrice(token.pair) as number;
+      const priceDrop = Math.round(Calc.getDrop(currentPrice, token.high));
+      const priceDropBar = Calc.getDropBar(currentPrice, token.high);
+      const networks = token.networks.split(',');
+      const mergedToken = { ...token, priceDrop, priceDropBar, currentPrice, networks };
+      return mergedToken;
+    }
+    const tokenListMerged = await addPriceDrop(token[0]);
+
+    return res.status(200).json({
+      tokenListMerged
+    });
+
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ error });
+  }
+};
+
 const getAth = async (req: Request, res: Response) => {
   try {
     const tokenLists: any = await Token.getTokenList();
@@ -131,5 +179,7 @@ export default {
   bootstrap,
   getCurrentPairs,
   updateAggregatesTable,
-  addTokenInfo
+  addTokenInfo,
+  getAthByPair,
+  getAthBySymbol
 };
