@@ -3,21 +3,13 @@ import postTgAth from "../lib/telegram";
 import { getAscendexPrice } from '../services/ascendexService';
 import { getBinancePrice } from '../services/binanceService';
 import Token, { TokenAth, TokenInfo} from '../models/token';
+import Pair from '../models/pair';
 import TokenCandle, { TokenTypeCandle, MaxPrice } from '../models/tokenCandles'
 import Coindesk from '../services/coindesk';
 import Calc from '../lib/calc';
 import { body, validationResult } from 'express-validator';
 
 // todo use axios everywhere
-
-const pairs = [
-  { symbol: "BTC/USDT", pair: "BTCUSDT" },
-  { symbol: "ETH/USDT", pair: "ETHUSDT" },
-  { symbol: "ZIG/USDT", pair: "ZIGUSDT" },
-  { symbol: "LUNA/USDT", pair: "LUNAUSDT" },
-  { symbol: "ATOM/USDT", pair: "ATOMUSDT" },
-  { symbol: "SOL/USDT", pair: "SOLUSDT" }
-]
 
 const processUpdate = async (pair: string, symbol: string) => {
   let row: TokenTypeCandle;
@@ -41,13 +33,12 @@ const processUpdate = async (pair: string, symbol: string) => {
   }
 };
 
-const getCurrentPairs = async (req: Request, res: Response) => {
-  return res.status(200).json(pairs);
-}
 
 const updateAggregatesTable = async (req: Request, res: Response) => {
   try {
-    const supportedPairs = pairs;
+    const supportedPairs = await Pair.getPairs();
+
+    console.log('supportedPairs', supportedPairs);
 
     for(const pair of supportedPairs) {
       await  processUpdate(pair.pair, pair.symbol);
@@ -178,7 +169,6 @@ export default {
   getAth,
   postTgATH,
   bootstrap,
-  getCurrentPairs,
   updateAggregatesTable,
   addTokenInfo,
   getAthByPair,
