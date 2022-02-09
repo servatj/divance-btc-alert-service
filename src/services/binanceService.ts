@@ -32,3 +32,13 @@ export const getBinancePrice = async (symbol: string, pair: string) => {
     close: parseFloat(close),
   };
 }
+
+export const getBinanceCurrentPrice = async (symbol: string) => {
+  try {
+    const tick = await binance.prices(symbol);
+    const currentPrice = tick[symbol];
+    return currentPrice;
+  } catch (error) {
+    console.log("error getting current price", error);
+  }
+}

@@ -60,6 +60,7 @@ model Token_info {
   totalSupply Float
   fixedSupply Boolean
   token_ath Token_ath?
+  api String
 }
 
 model Pair {
