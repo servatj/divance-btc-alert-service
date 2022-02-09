@@ -15,6 +15,7 @@ export interface TokenInfo {
   networks: string;
   totalSupply: number;
   fixedSupply: boolean;
+  api: string;
 }
 export interface High {
   high: number
@@ -131,6 +132,7 @@ const addTokenInfo = async (token: Partial<TokenInfo>) => {
       networks: token.networks || '',
       totalSupply: token.totalSupply || 0,
       fixedSupply: token.fixedSupply || false,
+      api: token.api || '',
     }
   });
 }
