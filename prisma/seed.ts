@@ -13,12 +13,12 @@ const seedTokens = async () => {
 }
 
 const seedInfo = async () => {
-    await prisma.token_info.create({ data: { symbol: 'BTC/USDT', logo_url: 'bitcoin', pair: 'bitcoin', networks: 'bitcoin', totalSupply: 210000000, fixedSupply: true }});
-    await prisma.token_info.create({ data: { symbol: 'LUNA/USDT', logo_url: 'terra-luna', pair: 'terra-luna', networks: 'luna', totalSupply: 800000000, fixedSupply: false }});
-    await prisma.token_info.create({ data: { symbol: 'ZIG/USDT', logo_url: 'zignaly', pair: 'zignaly', networks: 'zignaly', totalSupply: 2000000000, fixedSupply: true }});
-    await prisma.token_info.create({ data: { symbol: 'ETH/USDT', logo_url: 'ethereum', pair: 'ethereum', networks: 'ethereum, ', totalSupply: 1910000000, fixedSupply: false }});
-    await prisma.token_info.create({ data: { symbol: 'SOL/USDT', logo_url: 'solana', pair: 'solana', networks: 'solana', totalSupply: 314000000, fixedSupply: false }});
-    await prisma.token_info.create({ data: { symbol: 'ATOM/USDT', logo_url: 'cosmos', pair: 'cosmos', networks: 'cosmos', totalSupply: 286000000, fixedSupply: false }});
+    await prisma.token_info.create({ data: { symbol: 'BTC/USDT', logo_url: 'bitcoin', pair: 'bitcoin', networks: 'bitcoin', totalSupply: 210000000, fixedSupply: true , api: 'binance', token_exchange_query: 'BTCUSD'}});
+    await prisma.token_info.create({ data: { symbol: 'LUNA/USDT', logo_url: 'terra-luna', pair: 'terra-luna', networks: 'luna', totalSupply: 800000000, fixedSupply: false, api: 'binance', token_exchange_query: 'BTCUSD' }});
+    await prisma.token_info.create({ data: { symbol: 'ZIG/USDT', logo_url: 'zignaly', pair: 'zignaly', networks: 'zignaly', totalSupply: 2000000000, fixedSupply: true , api: 'binance', token_exchange_query: 'BTCUSD'}});
+    await prisma.token_info.create({ data: { symbol: 'ETH/USDT', logo_url: 'ethereum', pair: 'ethereum', networks: 'ethereum, ', totalSupply: 1910000000, fixedSupply: false, api: 'binance', token_exchange_query: 'BTCUSD' }});
+    await prisma.token_info.create({ data: { symbol: 'SOL/USDT', logo_url: 'solana', pair: 'solana', networks: 'solana', totalSupply: 314000000, fixedSupply: false, api: 'binance', token_exchange_query: 'BTCUSD' }});
+    await prisma.token_info.create({ data: { symbol: 'ATOM/USDT', logo_url: 'cosmos', pair: 'cosmos', networks: 'cosmos', totalSupply: 286000000, fixedSupply: false, api: 'binance', token_exchange_query: 'BTCUSD' }});
 }
 
 const pairInfo = async () => {

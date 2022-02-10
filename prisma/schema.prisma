@@ -61,6 +61,7 @@ model Token_info {
   fixedSupply Boolean
   token_ath Token_ath?
   api String
+  token_exchange_query String
 }
 
 model Pair {

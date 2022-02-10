@@ -7,9 +7,9 @@ import Pair from '../models/pair';
 import TokenCandle, { TokenTypeCandle, MaxPrice } from '../models/tokenCandles'
 import Coindesk from '../services/coindesk';
 import Calc from '../lib/calc';
-import { body, validationResult } from 'express-validator';
+import { getCurrentPrice } from '../services/priceService';
 
-// todo use axios everywhere
+import { body, validationResult } from 'express-validator';
 
 const processUpdate = async (pair: string, symbol: string) => {
   let row: TokenTypeCandle;
@@ -58,7 +58,7 @@ const getAthBySymbol = async (req: Request, res: Response) => {
   try {
     const token: any = await Token.getTokenBySymbol(symbol);
     const addPriceDrop = async (token: any) => {
-      const currentPrice: number = await Coindesk.getCurrentPrice(token.pair) as number;
+      const currentPrice: number = await getCurrentPrice(token.token_exchange_query, token.api) as number;
       const priceDrop = Math.round(Calc.getDrop(currentPrice, token.high));
       const priceDropBar = Calc.getDropBar(currentPrice, token.high);
       const networks = token.networks.split(',');
@@ -82,7 +82,9 @@ const getAthByPair = async (req: Request, res: Response) => {
     console.log('token', token);
 
     const addPriceDrop = async (token: any) => {
-      const currentPrice: number = await Coindesk.getCurrentPrice(token.pair) as number;
+      console.log('token', token);
+      const currentPrice: number = await getCurrentPrice(token.token_exchange_query, token.api)  as number;
+
       const priceDrop = Math.round(Calc.getDrop(currentPrice, token.high));
       const priceDropBar = Calc.getDropBar(currentPrice, token.high);
       const networks = token.networks.split(',');
@@ -105,7 +107,8 @@ const getAth = async (req: Request, res: Response) => {
   try {
     const tokenLists: any = await Token.getTokenList();
     const addPriceDrop = async (token: any) => {
-      const currentPrice: number = await Coindesk.getCurrentPrice(token.pair) as number;
+      console.log('token', token);
+      const currentPrice: number = await getCurrentPrice(token.token_exchange_query, token.api) as number;
       const priceDrop = Math.round(Calc.getDrop(currentPrice, token.high));
       const priceDropBar = Calc.getDropBar(currentPrice, token.high);
       const networks = token.networks.split(',');

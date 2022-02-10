@@ -1,10 +1,14 @@
+import ascendexService from "./ascendexService";
+import binanceService from "./binanceService";
+import coindesk from "./coindesk";
 
-const getCurrentPrice  = async (symbol: string) => {
-    const getProviderApi = (symbol: string) => {
-        if (symbol.includes('BTC')) {
-            return 'coindesk';
-        } else {
-            return 'coingecko';
-        }
-    }
+export const getCurrentPrice = async (symbol: string, exchange: string) => {
+  console.log('get current price', symbol, exchange);
+  const exchanges: any = {
+    ascendex: ascendexService,
+    binance: binanceService,
+    coindesk: coindesk,
+  }
+
+  return await exchanges[exchange].getCurrentPrice(symbol);
 }

@@ -14,3 +14,18 @@ export const getAscendexPrice = async (symbol: string) => {
     close: parseFloat(lastPrice.data.c),
   };
 }
+
+
+export const getCurrentPrice = async (symbol: string) => {
+  try {
+    const { data } = await axios.get(`https://ascendex.com/api/pro/v1/ticker?symbol=${symbol}`);
+    const [lastPrice, ] = data.data.ask;
+    return Number(lastPrice);
+  } catch (error) {
+    console.log('error getting Current Price', error);
+  }
+}
+
+export default {
+  getCurrentPrice
+}

@@ -10,11 +10,11 @@ const getCurrentSymbolPrice = async (symbol: string) => {
   }
 }
 
-const getCurrentPrice = async (symbol: string) => {
+export const getCurrentPrice = async (symbol: string) => {
   try {
    const { data } = await axios.get(`https://api.coingecko.com/api/v3/simple/price?ids=${symbol}&vs_currencies=usd`);
    const currentPrice: Number = data[symbol] ? data[symbol].usd : 0;
-   return currentPrice
+   return Number(currentPrice);
   } catch (error) {
     console.log('error getting Current Price', error);
   }

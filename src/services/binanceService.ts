@@ -42,3 +42,17 @@ export const getBinanceCurrentPrice = async (symbol: string) => {
     console.log("error getting current price", error);
   }
 }
+
+export const getCurrentPrice = async (symbol: string) => {
+  try {
+    const tick = await binance.prices(symbol);
+    const currentPrice = tick[symbol];
+    return Number(currentPrice);
+  } catch (error) {
+    console.log("error getting current price", error);
+  }
+}
+
+export default {
+  getCurrentPrice
+}

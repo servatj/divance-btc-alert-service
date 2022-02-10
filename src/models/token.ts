@@ -16,6 +16,7 @@ export interface TokenInfo {
   totalSupply: number;
   fixedSupply: boolean;
   api: string;
+  token_exchange_query: string;
 }
 export interface High {
   high: number
@@ -61,8 +62,6 @@ const getMaxHigh = async (symbol: string) => await prisma.token_ath.findFirst({
   },
 }) || { high: 0 };
 
-
-
 const getTokenList = async () => {
   const result = await prisma.$queryRaw`
     select
@@ -74,7 +73,9 @@ const getTokenList = async () => {
       networks,
       "totalSupply",
       "fixedSupply",
-      ta.symbol
+      api,
+      ta.symbol,
+      token_exchange_query
     from alert."Token_ath" ta  inner join alert."Token_info" ti on ta."symbolId" = ti.id
   `;
   return result;
@@ -92,7 +93,9 @@ const getTokenByPair = async (pair: string) => {
       networks,
       "totalSupply",
       "fixedSupply",
-      ta.symbol
+      api,
+      ta.symbol,
+      token_exchange_query
     from alert."Token_ath" ta  inner join alert."Token_info" ti on ta."symbolId" = ti.id
     where pair = ${pair}
   `;
@@ -133,6 +136,7 @@ const addTokenInfo = async (token: Partial<TokenInfo>) => {
       totalSupply: token.totalSupply || 0,
       fixedSupply: token.fixedSupply || false,
       api: token.api || '',
+      token_exchange_query: token.token_exchange_query || '',
     }
   });
 }
