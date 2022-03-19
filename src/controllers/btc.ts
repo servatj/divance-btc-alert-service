@@ -57,6 +57,7 @@ const getAthBySymbol = async (req: Request, res: Response) => {
   const { symbol } = req.params;
   try {
     const token: any = await Token.getTokenBySymbol(symbol);
+
     const addPriceDrop = async (token: any) => {
       const currentPrice: number = await getCurrentPrice(token.token_exchange_query, token.api) as number;
       const priceDrop = Math.round(Calc.getDrop(currentPrice, token.high));
@@ -107,12 +108,12 @@ const getAth = async (req: Request, res: Response) => {
   try {
     const tokenLists: any = await Token.getTokenList();
     const addPriceDrop = async (token: any) => {
-      console.log('token', token);
       const currentPrice: number = await getCurrentPrice(token.token_exchange_query, token.api) as number;
       const priceDrop = Math.round(Calc.getDrop(currentPrice, token.high));
       const priceDropBar = Calc.getDropBar(currentPrice, token.high);
       const networks = token.networks.split(',');
       const mergedToken = { ...token, priceDrop, priceDropBar, currentPrice, networks };
+      console.log(new Date())
       return mergedToken;
     }
 
