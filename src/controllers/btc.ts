@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 import postTgAth from "../lib/telegram";
 import { getAscendexPrice } from '../services/ascendexService';
-import { getBinancePrice } from '../services/binanceService';
-import Token, { TokenAth, TokenInfo} from '../models/token';
+import { getBinancePrice } from '../services/binancePriceProxy';
+import Token, { TokenAth, TokenInfo } from '../models/token';
 import Pair from '../models/pair';
 import TokenCandle, { TokenTypeCandle, MaxPrice } from '../models/tokenCandles'
 import Coindesk from '../services/coindesk';
@@ -17,7 +17,7 @@ const processUpdate = async (pair: string, symbol: string) => {
   if(pair === 'ZIGUSDT') {
     row = await getAscendexPrice(symbol)
   } else {
-    row = await getBinancePrice(symbol, pair)
+    row = await getBinancePrice(pair)
   }
 
   TokenCandle.upsert(symbol, row);
